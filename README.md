@@ -1,2 +1,2 @@
 # directory-explorer
-A simple dir explorer written in Go lang
+A simple directory explorer written in Go lang
