@@ -3,40 +3,75 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 )
 
 func main() {
 
 	stop := false
+	totalsteps := 0
+	lastCommand := ""
+
+	move_back := "../"
 
 	for stop == false {
 
 		step := 0
 
-		files, _ := os.Open(".")
+		var Currfiles *os.File
 
-		defer files.Close()
+		if totalsteps == 0 {
+			files, _ := os.Open(".")
+			Currfiles = files
+		} else {
 
-		filesInfo, _ := files.Readdir(-1)
+			files, _ := os.Open(lastCommand)
+			Currfiles = files
+		}
 
-		i := 0
+		// println(Currfiles.Chdir())
+
+		defer Currfiles.Close()
+
+		filesInfo, _ := Currfiles.Readdir(-1)
+
+		i := 1
+
+		filesMap := make(map[int]string)
+
+		filesMap[1] = move_back
+
 		for _, file := range filesInfo {
-
 			if file.IsDir() {
 				i++
-				fmt.Println("Dir", i, ":", file.Name())
+				// fmt.Println("Dir", i, ":", file.Name(), file.Size(), "Bytes")
+
+				filesMap[i] = file.Name()
 
 			} else {
-				fmt.Println("File:", file.Name())
+				// fmt.Println("File:", file.Name())
 			}
+		}
+
+		// fmt.Println("map:", filesMap)
+
+		keys := make([]int, 0, len(filesMap))
+		for k := range filesMap {
+			keys = append(keys, k)
+		}
+		sort.Ints(keys)
+
+		for key, element := range filesMap {
+			fmt.Println("Step:", key, "=>", element)
 		}
 
 		fmt.Println("Choose a Step")
 		fmt.Scan(&step)
 
-		fmt.Println("Choosen step", step)
+		lastCommand = filesMap[step]
+		totalsteps++
 
-		stop = true
+		continue
 
 	}
 
