@@ -15,8 +15,13 @@ func main() {
 	var Currfiles *os.File
 	if totalsteps == 0 {
 
-		files, _ := os.Open(".")
+		files, err := os.Open(".")
 		Currfiles = files
+
+		if err != nil {
+			fmt.Println("error opening directory:", err)
+
+		}
 	}
 	defer Currfiles.Close()
 
@@ -33,7 +38,12 @@ func main() {
 		files, _ := os.Open(".")
 		Currfiles = files
 
-		filesInfo, _ := Currfiles.Readdir(-1)
+		filesInfo, err := Currfiles.Readdir(-1)
+
+		if err != nil {
+			fmt.Println("error reading directory:", err)
+			continue
+		}
 
 		i := 1
 
